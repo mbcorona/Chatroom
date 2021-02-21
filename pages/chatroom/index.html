@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom | Chat</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+        }
+
+        .content {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 40px;
+            overflow-y: scroll;
+            background-color: #EFEFEF;
+            padding: 15px;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background-color: grey;
+        }
+
+        .footer input {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            outline: 0;
+            display: inline-block;
+            border: none;
+            height: 40px;
+        }
+
+        .footer input[type="text"] {
+            width: 70%;
+        }
+
+        .footer input[type="submit"] {
+            width: 30%;
+            background-color: black;
+            color: white;
+        }
+
+        .message {
+            padding: 5px;
+            border: solid 1px darkgray;
+            border-radius: 10px;
+            margin: 2px 0;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .bot-info img {
+            border-radius: 50%;
+        }
+
+        .bot-info small {
+            vertical-align: top;
+            background: black;
+            color: white;
+            padding: 5px;
+            border-radius: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content chat-container">
+        <div class="bot-info text-right">
+            <small>Use the command /stock=stock_code to get a stock quote</small>
+            <img height="50px"
+                src="https://image.freepik.com/vector-gratis/icono-robot-diseno-signo-bot-concepto-simbolo-chatbot-servicio-soporte-voz-bot-bot-soporte-linea-vector-stock-ilustracion_100456-34.jpg"
+                alt="">
+        </div>
+        <div class="message" hidden>
+            <span class="username"><b></b></span>
+            <br>
+            <span class="text"></span>
+        </div>
+    </div>
+    <div class="footer">
+        <form action="" onsubmit="return send(event)">
+            <input type="text" name="input-message" id="input-message" placeholder="Type something..."
+                autocomplete="off"><input type="submit" value="SEND">
+        </form>
+    </div>
+
+    <script src="./socket.io/socket.io.js"></script>
+    <script>
+        let token = localStorage.token;
+        let username = localStorage.username;
+        if (!token) window.pathname = "/";
+
+        var socket = io();
+
+        socket.on("chatroom", (msg) => {
+            displayMessage(msg)
+        });
+
+        let inputMessage = document.getElementById('input-message');
+        let chatContainer = document.querySelector('.chat-container');
+        let messageTemplate = document.querySelector('.message');
+
+        function send(e) {
+            e.preventDefault();
+
+            let url = "/chat";
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    inputMessage.value = "";
+                }
+            };
+
+            xhttp.open("POST", url, true);
+            xhttp.setRequestHeader('Content-Type', 'application/json');
+            xhttp.setRequestHeader('token', token);
+            xhttp.send(JSON.stringify({
+                text: inputMessage.value
+            }));
+
+            return false;
+        }
+
+        function displayMessage(message) {
+            let newMessage = messageTemplate.cloneNode(true);
+            newMessage.querySelector('.username b').textContent = message.username;
+            newMessage.querySelector('.text').textContent = message.text;
+            if (message.username === username) {
+                newMessage.classList.add("text-right");
+            }
+            newMessage.removeAttribute('hidden');
+            chatContainer.appendChild(newMessage);
+        }
+        function loadChat() {
+            let url = "/chat";
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let result = JSON.parse(this.response);
+                    result.forEach(m => {
+                        displayMessage(m);
+                    });
+                }
+            };
+
+            xhttp.open("GET", url, true);
+            xhttp.setRequestHeader('token', token);
+            xhttp.send()
+        }
+        loadChat();
+    </script>
+</body>
+
+</html>
