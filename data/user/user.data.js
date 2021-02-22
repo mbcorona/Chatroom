@@ -17,10 +17,6 @@ var _users = [
     },
 ];
 
-function get(){
-    return _users;
-}
-
 function getByUsername(username){
     return _users.find(x => x.username === username);
 }
@@ -30,7 +26,6 @@ function getByToken(token){
 }
 
 module.exports = {
-    get: get,
     getByUsername: getByUsername,
     getByToken: getByToken
 }
