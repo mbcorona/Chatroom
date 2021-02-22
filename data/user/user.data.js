@@ -1,19 +1,19 @@
 var _users = [
     {
         username: "bruno",
-        password: "UGREENBlack&Decker"
+        password: "09876"
     },
     {
-        username: "mario",
-        password: "123"
+        username: "alexa",
+        password: "76543"
     },
     {
         username: "merwin",
-        password: "654321"
+        password: "34567"
     },
     {
         username: "vanessa",
-        password: "456789"
+        password: "12345"
     },
 ];
 

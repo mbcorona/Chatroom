@@ -15,12 +15,16 @@ function getQuote(code) {
 
             // The whole response has been received. Print out the result.
             resp.on('end', function () {
-                result = result.split("\r\n");
-                result[0] = result[0].split(",");
-                result[1] = result[1].split(",");
-                let symbolPos = result[0].indexOf('Symbol');
-                let quotePos = result[0].indexOf('Open');
-                resolve(`${result[1][symbolPos]} quote is \$${result[1][quotePos]} per share`);
+                try {
+                    result = result.split("\r\n");
+                    result[0] = result[0].split(",");
+                    result[1] = result[1].split(",");
+                    let symbolPos = result[0].indexOf('Symbol');
+                    let quotePos = result[0].indexOf('Open');
+                    resolve(`${result[1][symbolPos]} quote is \$${result[1][quotePos]} per share`);
+                } catch (error) {
+                    reject(error);
+                }
             });
 
         }).on("error", (err) => {

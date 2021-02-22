@@ -13,8 +13,13 @@ module.exports = function (io) {
     }
 
     async function botQuote(code) {
-        let quote = await stockQuoteService.getQuote(code);
-        io.emit('chatroom', { username: 'BOT', text: quote.toString() });
+        let quote;
+        try {
+            quote = await stockQuoteService.getQuote(code);
+            io.emit('chatroom', { username: 'BOT', text: quote.toString() });
+        } catch (error) {
+            io.emit('chatroom', { username: 'BOT', text: `There was an eror getting your quote: ${code}`});
+        }
     }
     
     function sendMessage(user, text) {
