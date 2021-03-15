@@ -4,9 +4,9 @@ module.exports = function (io) {
   const authService = require('../../services/auth/auth.service');
   const chatService = require('../../services/chat/chat.service')(io);
 
-  router.use(function (req, res, next) {
+  router.use(async (req, res, next) => {
     let token = req.headers['token'];
-    let user = authService.authenticateWithToken(token);
+    let user = await authService.authenticateWithToken(token);
     if (!user) return res.status(401).send();
     req.user = user;
     next();
@@ -17,8 +17,8 @@ module.exports = function (io) {
     res.send();
   });
 
-  router.get('/', (req, res) => {
-    res.json(chatService.getChat());
+  router.get('/', async (req, res) => {
+    res.json(await chatService.getChat());
   });
 
   return router;

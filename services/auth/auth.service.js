@@ -15,8 +15,13 @@ function _verifyToken(token) {
     return decoded;
 }
 
-function authenticate(username, password) {
-    let user = userData.getByUsername(username);
+async function signup(user) {
+    let response = await userData.addUser(user);
+    return response;
+}
+
+async function authenticate(username, password) {
+    let user = await userData.getByUsername(username);
     if (user && user.password === password) {
         var token = _generateToken({ username: username });
         user.token = token;
@@ -26,14 +31,15 @@ function authenticate(username, password) {
     return null;
 }
 
-function authenticateWithToken(token) {
+async function authenticateWithToken(token) {
     let payload = _verifyToken(token);
     if (!payload) return null;
 
-    return userData.getByUsername(payload.username);
+    return await userData.getByUsername(payload.username);
 }
 
 module.exports = {
+    signup: signup,
     authenticate: authenticate,
     authenticateWithToken: authenticateWithToken
 };

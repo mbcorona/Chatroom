@@ -1,24 +1,12 @@
-var _users = [
-    {
-        username: "bruno",
-        password: "09876"
-    },
-    {
-        username: "alexa",
-        password: "76543"
-    },
-    {
-        username: "merwin",
-        password: "34567"
-    },
-    {
-        username: "vanessa",
-        password: "12345"
-    },
-];
+const User = require('./user.model');
 
-function getByUsername(username){
-    return _users.find(x => x.username === username);
+async function addUser(user){
+    let _user = new User(user);
+    return await _user.save();
+}
+
+async function getByUsername(username){
+    return await User.findOne({username: username});
 }
 
 function getByToken(token){
@@ -26,6 +14,7 @@ function getByToken(token){
 }
 
 module.exports = {
+    addUser: addUser,
     getByUsername: getByUsername,
     getByToken: getByToken
 }

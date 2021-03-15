@@ -4,6 +4,8 @@ const port = 3000;
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+require('./data/database');
+
 const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())

@@ -2,14 +2,8 @@ module.exports = function (io) {
     const chatData = require('../../data/chat/chat.data');
     const stockQuoteService = require('../stock_quote/stock_quote.service');
 
-    function sortChat(a, b) {
-        if (a.date < b.date) return -1;
-        return 1;
-    }
-
-    function getChat() {
-        let chat = chatData.get();
-        return chat.sort(sortChat).slice(0, 50);
+    async function getChat() {
+        return await chatData.get();
     }
 
     async function botQuote(code) {
