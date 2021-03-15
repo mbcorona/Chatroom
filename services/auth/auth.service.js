@@ -1,19 +1,24 @@
-let userData = require('../../data/user/user.data');
+const userData = require('../../data/user/user.data');
+const jwt = require('jsonwebtoken');
+const secret = "chatroom_secret";
 
-function generateToken() {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    var charactersLength = characters.length;
-    for (var i = 0; i < 8; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+function _generateToken(payload) {
+    return jwt.sign(payload, secret);
+}
+
+function _verifyToken(token) {
+    let decoded;
+    try {
+        decoded = jwt.verify(token, secret);
+    } catch (error) {
     }
-    return result;
+    return decoded;
 }
 
 function authenticate(username, password) {
     let user = userData.getByUsername(username);
     if (user && user.password === password) {
-        var token = generateToken();
+        var token = _generateToken({ username: username });
         user.token = token;
         return token;
     }
@@ -22,7 +27,10 @@ function authenticate(username, password) {
 }
 
 function authenticateWithToken(token) {
-    return userData.getByToken(token);
+    let payload = _verifyToken(token);
+    if (!payload) return null;
+
+    return userData.getByUsername(payload.username);
 }
 
 module.exports = {
