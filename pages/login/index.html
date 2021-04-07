@@ -30,26 +30,28 @@
             e.preventDefault();
 
             let url = "/auth";
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    let result = JSON.parse(this.response);
-                    if (!result.token) {
+            let payload = {
+                username: username.value,
+                password: password.value
+            }
+            fetch(url,
+                {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => response.json())
+                .then(response => {
+                    if (!response.token) {
                         authError.removeAttribute('hidden')
                     } else {
                         localStorage.setItem('username', username.value);
-                        localStorage.setItem('token', result.token);
+                        localStorage.setItem('token', response.token);
                         location.pathname = "/chatroom"
                     }
-                }
-            };
-
-            xhttp.open("POST", url, true);
-            xhttp.setRequestHeader('Content-Type', 'application/json');
-            xhttp.send(JSON.stringify({
-                username: username.value,
-                password: password.value
-            }));
+                });
 
             return false;
         }

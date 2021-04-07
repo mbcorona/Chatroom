@@ -118,20 +118,22 @@
             e.preventDefault();
 
             let url = "/chat";
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    inputMessage.value = "";
-                }
-            };
-
-            xhttp.open("POST", url, true);
-            xhttp.setRequestHeader('Content-Type', 'application/json');
-            xhttp.setRequestHeader('token', token);
-            xhttp.send(JSON.stringify({
-                text: inputMessage.value
-            }));
-
+            fetch(url,
+                {
+                    method: 'post',
+                    headers: {
+                        'token': token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: inputMessage.value
+                    })
+                })
+                .then(response => {
+                    if (response.status === 200) {
+                        inputMessage.value = "";
+                    }
+                })
             return false;
         }
 
@@ -147,19 +149,18 @@
         }
         function loadChat() {
             let url = "/chat";
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    let result = JSON.parse(this.response);
-                    result.forEach(m => {
+            fetch(url,
+                {
+                    headers: {
+                        'token': token
+                    }
+                })
+                .then(response => response.json())
+                .then(response => {
+                    response.forEach(m => {
                         displayMessage(m);
                     });
-                }
-            };
-
-            xhttp.open("GET", url, true);
-            xhttp.setRequestHeader('token', token);
-            xhttp.send()
+                });
         }
         loadChat();
     </script>
