@@ -10,22 +10,23 @@ module.exports = function (io) {
         let quote;
         try {
             quote = await stockQuoteService.getQuote(code);
-            io.emit('chatroom', { username: 'BOT', text: quote.toString() });
+            io.emit('chatroom', { username: 'BOT', text: quote });
         } catch (error) {
             io.emit('chatroom', { username: 'BOT', text: `There was an eror getting your quote: ${code}`});
         }
     }
     
-    function sendMessage(user, text) {
+    async function sendMessage(user, text) {
         if (text.startsWith('/stock=')) {
-            return botQuote(text.replace('/stock=', ''));
+            return await botQuote(text.replace('/stock=', ''));
         }
         let message = {
             username: user.username,
             text: text
         }
-        chatData.add(message);
+        let chat = await chatData.add(message);
         io.emit('chatroom', message);
+        return chat;
     }
 
     return {

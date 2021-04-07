@@ -15,7 +15,13 @@ $ npm install
 $ node index.js
 ```
 
+## Running tests
+This project uses Jasmine for unit testing.
+
+```
+$ npm test
+```
+
 ## TODO:
 * Create UI for Signup
-* Add unit tests
 * Add ability to have multiple rooms

@@ -3,14 +3,14 @@ const Chat = require('./chat.model');
 // Currently 1 chatroom is supported
 const room = 'chatroom1';
 
-function add(m) {
+async function add(m) {
     let chat = new Chat({
         room: room,
         username: m.username,
         text: m.text,
         date: new Date().toISOString()
     });
-    chat.save();
+    return await chat.save();
 }
 
 async function get(options) {
